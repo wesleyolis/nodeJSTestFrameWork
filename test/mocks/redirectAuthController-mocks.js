@@ -34,9 +34,15 @@ exports.redirectAuthControllerDataMocks = {
           throws: undefined
         }
       },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount1'],
+          returns: 'supplierIdForTestAccount1'
+        }
+      },
       auth: {
         generateAuthToken: {
-          auxParams: ['WalletAuthSubcriptionIdentifierId1'],
+          auxParams: ['WalletAuthSubcriptionIdentifierId1', 'supplierIdForTestAccount1'],
           returns: 'WalletAuthTokenId1',
           throws: undefined
         }
@@ -84,9 +90,15 @@ exports.redirectAuthControllerDataMocks = {
           throws: undefined
         }
       },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount2'],
+          returns: 'supplierIdForTestAccount2'
+        }
+      },
       auth: {
         generateAuthToken: {
-          auxParams: ['WalletAuthSubcriptionIdentifierId2'],
+          auxParams: ['WalletAuthSubcriptionIdentifierId2', 'supplierIdForTestAccount2'],
           returns: undefined,
           throws: {
             response: {
@@ -135,9 +147,15 @@ exports.redirectAuthControllerDataMocks = {
           throws: undefined
         }
       },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount3'],
+          returns: 'supplierIdForTestAccount3'
+        }
+      },
       auth: {
         generateAuthToken: {
-          auxParams: ['WalletAuthSubcriptionIdentifierId3'],
+          auxParams: ['WalletAuthSubcriptionIdentifierId3', 'supplierIdForTestAccount3'],
           returns: undefined,
           throws: {
             response: {
@@ -186,9 +204,15 @@ exports.redirectAuthControllerDataMocks = {
           throws: undefined
         }
       },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount4'],
+          returns: 'supplierIdForTestAccount4'
+        }
+      },
       auth: {
         generateAuthToken: {
-          auxParams: ['WalletAuthSubcriptionIdentifierId4'],
+          auxParams: ['WalletAuthSubcriptionIdentifierId4', 'supplierIdForTestAccount4'],
           returns: undefined,
           throws: {
             response: {
@@ -237,9 +261,15 @@ exports.redirectAuthControllerDataMocks = {
           throws: undefined
         }
       },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount5'],
+          returns: 'supplierIdForTestAccount5'
+        }
+      },
       auth: {
         generateAuthToken: {
-          auxParams: ['WalletAuthSubcriptionIdentifierId5'],
+          auxParams: ['WalletAuthSubcriptionIdentifierId5', 'supplierIdForTestAccount5'],
           returns: undefined,
           throws: {
             response: {
@@ -251,6 +281,230 @@ exports.redirectAuthControllerDataMocks = {
     },
     response: {
       status: 501
+    }
+  },
+  // Run throught all the test case varients for dependent service call test.
+  // Ideally should just reference the dependance test and then have to setup
+  // a configuration to run with all those varients of the deps.
+  // otherwise basically a copy and past, into this level.
+  generateSupplierIdFails401: {
+    title: 'Generation of SupplierId Fails, 401 Unauthorized',
+    env: {
+      config: {
+        'vod-ms-digital-wallet.redirectEndPoints': {
+          TestType: {
+            uri: 'TestRedirectParameter',
+            merchantId: 'TestMerchantIdParameter'
+          }
+        }
+      }
+    },
+    request: {
+      method: 'GET',
+      params: {
+        type: 'TestType'
+      },
+      headers: {},
+      user: {
+        jwt: {
+          user_name: 'ZATestAccount2',
+          authorities: ['ROLE_SSO']
+        }
+      }
+    },
+    services: {
+      profile: {
+        getProfileSubscriptionOfTypeDigitalWallet: {
+          auxParams: ['ZATestAccount2'],
+          returns: {
+            subscriptionId: 'WalletAuthSubcriptionIdentifierId2'
+          },
+          throws: undefined
+        }
+      },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount2'],
+          throws: {
+            response: {
+              status: 401
+            }
+          }
+        }
+      },
+      auth: {
+        generateAuthToken: {
+          neverReached: true
+        }
+      }
+    },
+    response: {
+      status: 401
+    }
+  },
+  generateSupplierIdFails403: {
+    title: 'Generation of SupplierId Fails, 403 Forbidden',
+    env: {
+      config: {
+        'vod-ms-digital-wallet.redirectEndPoints': {
+          TestType: {
+            uri: 'TestRedirectParameter',
+            merchantId: 'TestMerchantIdParameter'
+          }
+        }
+      }
+    },
+    request: {
+      method: 'GET',
+      params: {
+        type: 'TestType'
+      },
+      headers: {},
+      user: {
+        jwt: {
+          user_name: 'ZATestAccount2',
+          authorities: ['ROLE_SSO']
+        }
+      }
+    },
+    services: {
+      profile: {
+        getProfileSubscriptionOfTypeDigitalWallet: {
+          auxParams: ['ZATestAccount2'],
+          returns: {
+            subscriptionId: 'WalletAuthSubcriptionIdentifierId2'
+          },
+          throws: undefined
+        }
+      },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount2'],
+          throws: {
+            response: {
+              status: 403
+            }
+          }
+        }
+      },
+      auth: {
+        generateAuthToken: {
+          neverReached: true
+        }
+      }
+    },
+    response: {
+      status: 403
+    }
+  },
+  generateSupplierIdFails404: {
+    title: 'Generation of SupplierId Fails, 404 Bad Request',
+    env: {
+      config: {
+        'vod-ms-digital-wallet.redirectEndPoints': {
+          TestType: {
+            uri: 'TestRedirectParameter',
+            merchantId: 'TestMerchantIdParameter'
+          }
+        }
+      }
+    },
+    request: {
+      method: 'GET',
+      params: {
+        type: 'TestType'
+      },
+      headers: {},
+      user: {
+        jwt: {
+          user_name: 'ZATestAccount2',
+          authorities: ['ROLE_SSO']
+        }
+      }
+    },
+    services: {
+      profile: {
+        getProfileSubscriptionOfTypeDigitalWallet: {
+          auxParams: ['ZATestAccount2'],
+          returns: {
+            subscriptionId: 'WalletAuthSubcriptionIdentifierId2'
+          },
+          throws: undefined
+        }
+      },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount2'],
+          throws: {
+            response: {
+              status: 404
+            }
+          }
+        }
+      },
+      auth: {
+        generateAuthToken: {
+          neverReached: true
+        }
+      }
+    },
+    response: {
+      status: 404
+    }
+  },
+  generateSupplierIdFails500: {
+    title: 'Generation of SupplierId Fails, 500 Internal Server Error',
+    env: {
+      config: {
+        'vod-ms-digital-wallet.redirectEndPoints': {
+          TestType: {
+            uri: 'TestRedirectParameter',
+            merchantId: 'TestMerchantIdParameter'
+          }
+        }
+      }
+    },
+    request: {
+      method: 'GET',
+      params: {
+        type: 'TestType'
+      },
+      headers: {},
+      user: {
+        jwt: {
+          user_name: 'ZATestAccount2',
+          authorities: ['ROLE_SSO']
+        }
+      }
+    },
+    services: {
+      profile: {
+        getProfileSubscriptionOfTypeDigitalWallet: {
+          auxParams: ['ZATestAccount2'],
+          returns: {
+            subscriptionId: 'WalletAuthSubcriptionIdentifierId2'
+          },
+          throws: undefined
+        }
+      },
+      transmart: {
+        supplierId: {
+          auxParams: ['ZATestAccount2'],
+          throws: {
+            response: {
+              status: 500
+            }
+          }
+        }
+      },
+      auth: {
+        generateAuthToken: {
+          neverReached: true
+        }
+      }
+    },
+    response: {
+      status: 424
     }
   },
   getProfileSubscriptionOfTypeDigitalWallet: {
@@ -283,6 +537,11 @@ exports.redirectAuthControllerDataMocks = {
         getProfileSubscriptionOfTypeDigitalWallet: {
           auxParams: ['ZATestAccount1'],
           returns: null
+        }
+      },
+      transmart: {
+        supplierId: {
+          neverReached: true
         }
       },
       auth: {
@@ -334,6 +593,11 @@ exports.redirectAuthControllerDataMocks = {
           }
         }
       },
+      transmart: {
+        supplierId: {
+          neverReached: true
+        }
+      },
       auth: {
         generateAuthToken: {
           neverReached: true
@@ -378,6 +642,11 @@ exports.redirectAuthControllerDataMocks = {
               status: 403
             }
           }
+        }
+      },
+      transmart: {
+        supplierId: {
+          neverReached: true
         }
       },
       auth: {
@@ -426,6 +695,11 @@ exports.redirectAuthControllerDataMocks = {
           }
         }
       },
+      transmart: {
+        supplierId: {
+          neverReached: true
+        }
+      },
       auth: {
         generateAuthToken: {
           neverReached: true
@@ -464,6 +738,11 @@ exports.redirectAuthControllerDataMocks = {
     services: {
       profile: {
         getProfileSubscriptionOfTypeDigitalWallet: {
+          neverReached: true
+        }
+      },
+      transmart: {
+        supplierId: {
           neverReached: true
         }
       },
@@ -508,6 +787,11 @@ exports.redirectAuthControllerDataMocks = {
           neverReached: true
         }
       },
+      transmart: {
+        supplierId: {
+          neverReached: true
+        }
+      },
       auth: {
         generateAuthToken: {
           neverReached: true
@@ -545,6 +829,11 @@ exports.redirectAuthControllerDataMocks = {
     services: {
       profile: {
         getProfileSubscriptionOfTypeDigitalWallet: {
+          neverReached: true
+        }
+      },
+      transmart: {
+        supplierId: {
           neverReached: true
         }
       },
@@ -589,6 +878,11 @@ exports.redirectAuthControllerDataMocks = {
     services: {
       profile: {
         getProfileSubscriptionOfTypeDigitalWallet: {
+          neverReached: true
+        }
+      },
+      transmart: {
+        supplierId: {
           neverReached: true
         }
       },

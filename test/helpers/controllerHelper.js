@@ -71,9 +71,14 @@ function moduleConfigShapeForControllerServies() {
 
       const next = sinon.spy();
 
-      await func(req, res, next);
+      try {
+        await func(req, res, next);
+      } catch (err) {
+        expect(execError.error).to.be.eq(undefined, 'The error that you are looking for has been throw and swalled some where.');
+        assert(false, 'The controller should have a try catch, that is handling everything.');
+      }
 
-      expect(execError).to.be.eq(undefined, 'The error that you are looking for has been throw and swalled some where.');
+      expect(execError.error).to.be.eq(undefined, 'The error that you are looking for has been throw and swalled some where.');
 
       expect(next.callCount).to.eq(1);
 
