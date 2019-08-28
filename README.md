@@ -31,5 +31,45 @@ To top this off, ideally from API schema that is to be consumed or the one that 
 A completedly tested micro-service test case can be loaded as consuming(bottom) function test cases requirements to furfilling in test driven design.
 While still written top level traditional test driven design test cases.
 
-6. Do remeber that depending on how complex the funciton is that you are writting that you may continue to refector the test cases and function signature inputs and add additional unforsearch corner cases and infliction(branching) test cases to ensure all branches in code are exersized.
+6. Do remeber that depending on how complex the funciton is that you are writting that you may continue to refector the test cases and function signature inputs and add additional unforsearch corner cases and infliction(branching) test cases to ensure all branches in code are exersized
 
+
+-----------------------------------------------------------------------
+
+
+  RedirectAuthController
+    Client Wrapper - GetProfileSubscriptionOfTypeDigitalWallet
+      Function Test Cases: Testing Redirect Auth Controller
+        ✓ Sucessfully redirect with token, were all inputs were wellformed. (162ms)
+        ✓ Generation of Auth Token Fails, 401 Unauthorized
+        ✓ Generation of Auth Token Fails, 403 Forbidden
+        ✓ Generation of Auth Token Fails, 500 Internal Server Error
+        ✓ Generation of Auth Token Fails, 501 Internal Server Error
+        ✓ getProfileSubscriptionOfTypeDigitalWallet, return null subscription
+        ✓ getProfileSubscriptionOfTypeDigitalWallet, Fails, 401 Unauthorized
+        ✓ getProfileSubscriptionOfTypeDigitalWallet, Fails, 403 Forbidden
+        ✓ getProfileSubscriptionOfTypeDigitalWallet, Fails, 500 Internal Server Error => 424 Failed Dependancy
+        ✓ Permission required ROLE_SSO, forbidden hacking
+        ✓ Permission Username not prefixed with ZA, forbidden hacking
+        ✓ Type parameter not found in path.
+        ✓ No redirect config found for type param in path, for RedirectEndPoint
+
+  Auth Service
+    Function Test Cases: generateAuthToken
+      ✓ otherError
+      ✓ success
+
+  Profile Service
+    Client Wrapper - GetProfileSubscriptionOfTypeDigitalWallet
+      Function Test Cases: Testing Profile Subscription Of Type Digital Wallet
+        ✓ otherError
+        ✓ notFound
+        ✓ success
+    Bulk Configuration Run
+      Function Test Cases: getProfileSubscriptionOfTypeDigitalWallet
+        ✓ otherError
+        ✓ notFound
+        ✓ success
+
+
+  21 passing (194ms)
