@@ -40,38 +40,33 @@ function moduleConfigShapeForServicesClients() {
 
       expect(wsLoggerMock.errMsg.callCount === 1 || wsLoggerMock.endMsg.callCount === 1, 'Should have called, WsLogger.errMsg or endMsg');
     },
-    moduleDepsPath: '../../src/services/',
-    moduleDepsRequirePath: './',
-    modulePathSuffix: 'Service',
-    depsModuleMockKey: 'services',
+    moduleDepsPath: '../../src/clients/',
+    moduleDepsRequirePath: '../clients/',
+    depsModuleMockKey: 'clients',
     calledWithConventionalParamsElseThrow: function (mockDataDepKey, key, context, calledArgs, unExpectedError) {
-      if (context.req !== calledArgs[0]) {
-        unExpectedError.error = `Controller called a ${mockDataDepKey} function: ${key} with different request parameter`;
-        console.error(`Controller called a ${mockDataDepKey} function: ${key} with different request parameter`);
-        throw new Error(`Controller called a ${mockDataDepKey} function: ${key} with different request parameter`);
-
-      }
-      if (context.req.headers !== calledArgs[1]) {
+      if (context.req.headers !== calledArgs[0]) {
         unExpectedError.error = `Controller called a ${mockDataDepKey} function: ${key} with different req.headers parameter`;
         console.error(`Controller called a ${mockDataDepKey} function: ${key} with different req.headers parameter`);
         throw new Error(`Controller called a ${mockDataDepKey} function: ${key} with different req.headers parameter`);
       }
 
-      return calledArgs.slice(2);
+      return calledArgs.slice(1);
     },
     testRunnerAsync: async function (funcKey, mockData, moduleWithEnvInstance) {
 
       const { mockController, req, postTest, execError } = moduleWithEnvInstance(mockData);
-
-      const args = [req, req.headers, ...mockData.auxParams];
 
       const func = mockController[funcKey];
 
       if (!func) { throw new Error(`'${funcKey}' not found in deps modules`); }
 
       if (typeof func === 'function') {
+
+        const args = [req, req.headers, ...mockData.auxParams || []];
+
         try {
-          const result = await func(... args);
+
+          const result = (typeof func === 'function') ? await func(... args) : await func;
 
           expect(execError.error).to.eq(undefined, 'The error that you are looking for has been throw and swalled some where.');
 
@@ -87,14 +82,14 @@ function moduleConfigShapeForServicesClients() {
           }
 
           if (mockData.throws) {
-            if (err.name) {
-              expect(err.name).to.deep.eq(mockData.throws);
-            }
-            expect(err).to.deep.eq(mockData.throws);
+            expect(err.name).to.deep.eq(mockData.throws);
           } else {
             throw new Error('test case has results defined, .result or .throws is undefined');
           }
         }
+
+        postTest();
+
       } else {
         // Loading of constants.
         const result = await func;
@@ -105,8 +100,6 @@ function moduleConfigShapeForServicesClients() {
           expect(result).to.deep.eq(mockData.result);
         }
       }
-
-      postTest();
     }
   };
 }

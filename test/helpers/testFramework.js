@@ -4,6 +4,7 @@ import config from 'config';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import httpMocks from 'node-mocks-http';
+import { json } from 'mocha/lib/reporters';
 
 chai.use(sinonChai);
 
@@ -43,10 +44,12 @@ function loadMockService(mockDataDepKey, module, req, serviceMocks, servicesMock
     const mockData = servicesMockData[key];
 
     if (!serviceMock) {
-      throw new Error(`Malformed test configuration, '${mockDataDepKey}.${module}.${key}' doesn't exist in module`);
+      throw new Error(`Malformed test configuration, '${mockDataDepKey}.${module}.${key}' doesn't exist in module:${JSON.stringify(servicesMockData)}`);
     }
 
-    serviceMock.reset();
+    if (!mockData || !(!mockData.auxParams && mockData.returns)) {
+      serviceMock.reset();
+    }
 
     if (!mockData) {
       serviceMock.callsFake(function () {
@@ -59,32 +62,44 @@ function loadMockService(mockDataDepKey, module, req, serviceMocks, servicesMock
 
     if (mockData.neverReached) {
       serviceMock.callsFake(function () {
-        unExpectedError.error = 'Error: Test Configuration, this function should never have been reached.';
+        unExpectedError.error = `Error: Test Configuration, this function should never have been reached.:${JSON.stringify(arguments)}`;
         console.error('Error: Test Configuration, this function should never have been reached.');
         throw new Error('Test Configuration, this function should never have been reached.');
       });
     } else if (mockData.neverCalled) {
       serviceMock.callsFake(function () {
-        unExpectedError.error = 'Error: Test Configuration, this function should never have been called.';
+        unExpectedError.error = `Error: Test Configuration, this function should never have been called::${JSON.stringify(arguments)}`;
         console.error('Error: Test Configuration, this function should never have been called.');
         throw new Error('Test Configuration, this function should never have been called.');
       });
     } else {
 
-      const stub = sinon.stub();
 
       // stub = stub.throws('Test Configuration, called a mock with unknown arguments');
 
-      const params = [...mockData.auxParams];
+      // if (mockData.auxParams) {
+      //   throw new Error(`Malformed test configuration, '${mockDataDepKey}.${module}.${key}.auxParams' doesn't exist in module:${JSON.stringify(mockData)}`);
+      // }
+
+      const params = mockData.auxParams ? [...mockData.auxParams] : [];
 
       if (mockData.throws === undefined && mockData.returns === undefined) {
         throw new Error('Test Configuration Missing throws or returns, can\'t be undefined');
       }
 
+      const stub = sinon.stub();
+
+      if (!mockData.auxParams && mockData.returns) {
+        serviceMocks[key] = mockData.returns;
+
+        //sinon.stub(serviceMocks, key).get(() => mockData.returns);
+        return;
+      }
+
       stub.callsFake(function () {
-        unExpectedError.error = 'Error: Test Configuration, called a mock with unknown arguments';
+        unExpectedError.error = `Error: Test Configuration, called a mock with additional arguments, expected: (${params.length})${JSON.stringify(params)}=${JSON.stringify(arguments)}`;
         console.error('Error: Test Configuration, called a mock with unknown arguments');
-        throw new Error('Test Configuration, called a mock with unknown arguments');
+        throw new Error(unExpectedError.error);
       });
 
       // the withArgs and throws on oneline it is much safer.
@@ -96,9 +111,16 @@ function loadMockService(mockDataDepKey, module, req, serviceMocks, servicesMock
 
 
       serviceMock.callsFake(function (...args) {
+
         const remaningParams = calledWithConventionalParamsElseThrow(mockDataDepKey, key, { req }, args, unExpectedError);
 
-        return stub(...remaningParams);
+        // There is no exact
+        if (remaningParams.length === params.length) {
+          return stub(...remaningParams);
+        }
+
+        unExpectedError.error = `Error: Test Configuration, called a mock with additional arguments, expected: (${params.length})${JSON.stringify(params)}=${JSON.stringify(remaningParams)}`;
+        throw new Error(unExpectedError.error);
       });
     }
   });
@@ -232,7 +254,7 @@ function createTestFrameWork(frameworkConfig, moduleShapeConfig) {
       moduleShapeConfig.moduleMocksTest();
     };
 
-    return { mockController: currentMockController, req, postTest: postTest, clientStubs: depModuleStubs, depThrows, execError: execError.error };
+    return { mockController: currentMockController, req, postTest: postTest, clientStubs: depModuleStubs, depThrows, execError: execError };
   };
 
   return async function (pauseOnTestKey = undefined) {

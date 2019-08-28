@@ -40,15 +40,19 @@ While still written top level traditional test driven design test cases.
   RedirectAuthController
     Client Wrapper - GetProfileSubscriptionOfTypeDigitalWallet
       Function Test Cases: Testing Redirect Auth Controller
-        ✓ Sucessfully redirect with token, were all inputs were wellformed. (162ms)
+        ✓ Sucessfully redirect with token, were all inputs were wellformed. (190ms)
         ✓ Generation of Auth Token Fails, 401 Unauthorized
         ✓ Generation of Auth Token Fails, 403 Forbidden
         ✓ Generation of Auth Token Fails, 500 Internal Server Error
         ✓ Generation of Auth Token Fails, 501 Internal Server Error
-        ✓ getProfileSubscriptionOfTypeDigitalWallet, return null subscription
-        ✓ getProfileSubscriptionOfTypeDigitalWallet, Fails, 401 Unauthorized
-        ✓ getProfileSubscriptionOfTypeDigitalWallet, Fails, 403 Forbidden
-        ✓ getProfileSubscriptionOfTypeDigitalWallet, Fails, 500 Internal Server Error => 424 Failed Dependancy
+        ✓ Generation of SupplierId Fails, 401 Unauthorized
+        ✓ Generation of SupplierId Fails, 403 Forbidden
+        ✓ Generation of SupplierId Fails, 404 Bad Request
+        ✓ Generation of SupplierId Fails, 500 Internal Server Error
+        ✓ getProfileSubscriptionOfType, return null subscription
+        ✓ getProfileSubscriptionOfType, Fails, 401 Unauthorized
+        ✓ getProfileSubscriptionOfType, Fails, 403 Forbidden
+        ✓ getProfileSubscriptionOfType, Fails, 500 Internal Server Error => 424 Failed Dependancy
         ✓ Permission required ROLE_SSO, forbidden hacking
         ✓ Permission Username not prefixed with ZA, forbidden hacking
         ✓ Type parameter not found in path.
@@ -60,16 +64,35 @@ While still written top level traditional test driven design test cases.
       ✓ success
 
   Profile Service
-    Client Wrapper - GetProfileSubscriptionOfTypeDigitalWallet
+    Client Wrapper - GetProfileSubscriptionOfType
       Function Test Cases: Testing Profile Subscription Of Type Digital Wallet
         ✓ otherError
         ✓ notFound
         ✓ success
     Bulk Configuration Run
-      Function Test Cases: getProfileSubscriptionOfTypeDigitalWallet
+      Function Test Cases: getProfileSubscriptionOfType
         ✓ otherError
         ✓ notFound
         ✓ success
+      Function Test Cases: SubscriptionType
+        ✓ types
+
+  Transmart Service
+    Function Test Cases: SupplierId cases revealing input to output result and throws of encapsulated functionality
+      ✓ supplierIdCBU
+      ✓ supplierIdEBU1
+      ✓ supplierIdEBU2
+      ✓ supplierIdMissMatchedEBUCBU
+      ✓ supplierIdPartialEBUCBU
+      ✓ supplierIdNoMsisdn
+      ✓ supplierIdMSISDN401
+      ✓ supplierIdMSISDN403
+      ✓ supplierIdMSISDN404
+      ✓ supplierIdMSISDN500
+      ✓ supplierIdMISIDNDetails401
+      ✓ supplierIdMISIDNDetails403
+      ✓ supplierIdMISIDNDetails404
+      ✓ supplierIdMISIDNDetails500
 
 
-  21 passing (194ms)
+  40 passing (233ms)

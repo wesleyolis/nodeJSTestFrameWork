@@ -1,4 +1,4 @@
-import { createTestFrameWork } from '../helpers/servicesHelper';
+import { createTestFrameWork } from '../helpers/serviceClientHelper';
 
 import * as dataMocks from '../mocks/authService-mocks';
 

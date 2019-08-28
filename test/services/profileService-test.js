@@ -1,16 +1,16 @@
-import { createTestFrameWork } from '../helpers/servicesHelper';
+import { createTestFrameWork } from '../helpers/serviceClientHelper';
 
 import * as dataMocks from '../mocks/profileService-mocks';
 
 describe('Profile Service', function () {
 
-  describe('Client Wrapper - GetProfileSubscriptionOfTypeDigitalWallet', async () => {
+  describe('Client Wrapper - GetProfileSubscriptionOfType', async () => {
 
     const frameworkConfig = {
       module: '../../src/services/profileService.js',
-      testModuleFuncName: 'getProfileSubscriptionOfTypeDigitalWallet',
+      testModuleFuncName: 'getProfileSubscriptionOfType',
       describe: 'Testing Profile Subscription Of Type Digital Wallet',
-      mockData: dataMocks.getProfileSubscriptionOfTypeDigitalWallet
+      mockData: dataMocks.getProfileSubscriptionOfType
     };
 
     const testFrameWorkInstance = createTestFrameWork(frameworkConfig);

@@ -6,12 +6,13 @@ exports.generateAuthToken = {
     },
     request: { headers: { a: 1 } },
     auxParams: [
-      'AuthIdOtherError'
+      'AuthIdOtherError', 
+      'SupplierId'
     ],
     clients: {
       auth: {
         generateAuthToken: {
-          auxParams: ['AuthIdOtherError'],
+          auxParams: ['AuthIdOtherError', 'SupplierId'],
           throws: 'OtherError'
         }
       }
@@ -25,11 +26,11 @@ exports.generateAuthToken = {
       }
     },
     request: { headers: { a: 3 } },
-    auxParams: ['AuthIdSucessfully'],
+    auxParams: ['AuthIdSucessfully', 'SupplierId'],
     clients: {
       auth: {
         generateAuthToken: {
-          auxParams: ['AuthIdSucessfully'],
+          auxParams: ['AuthIdSucessfully', 'SupplierId'],
           returns: 'AuthIdOtherError'
         }
       }

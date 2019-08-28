@@ -1,4 +1,18 @@
-const getProfileSubscriptionOfTypeDigitalWallet = {
+const SubscriptionType = {
+  types: {
+    env: {
+      config: {
+        'vod-ms-digital-wallet.profileSubscriptionTypeOfDigitalWallet': 5,
+        'vod-ms-digital-wallet.profileSubscriptionTypeOfMSISDN': 3
+      },
+      auxParams: []
+    },
+    clients: {},
+    result: { msisdn: 3, digitalWallet: 5 }
+  }
+};
+
+const getProfileSubscriptionOfType = {
   otherError: {
     env: {
       config: {
@@ -7,9 +21,7 @@ const getProfileSubscriptionOfTypeDigitalWallet = {
       }
     },
     request: { headers: { a: 1 } },
-    auxParams: [
-      'profileIdOtherError'
-    ],
+    auxParams: ['profileIdOtherError', 5],
     clients: {
       profile: {
         getProfileSubscriptionOfType: {
@@ -29,9 +41,7 @@ const getProfileSubscriptionOfTypeDigitalWallet = {
       }
     },
     request: { headers: { a: 2 } },
-    auxParams: [
-      'ProfileIdNotFound'
-    ],
+    auxParams: ['ProfileIdNotFound', 5],
     clients: {
       profile: {
         getProfileSubscriptionOfType: {
@@ -59,7 +69,7 @@ const getProfileSubscriptionOfTypeDigitalWallet = {
       }
     },
     request: { headers: { a: 3 } },
-    auxParams: ['profileIdSucessfull'],
+    auxParams: ['profileIdSucessfull', 5],
     clients: {
       profile: {
         getProfileSubscriptionOfType: {
@@ -84,5 +94,4 @@ const getProfileSubscriptionOfTypeDigitalWallet = {
   }
 };
 
-
-module.exports = { getProfileSubscriptionOfTypeDigitalWallet };
+module.exports = { getProfileSubscriptionOfType, SubscriptionType };

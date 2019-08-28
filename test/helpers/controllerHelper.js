@@ -69,55 +69,72 @@ function moduleConfigShapeForControllerServies() {
 
       if (!func) { throw new Error(`'${funcKey}' not found in deps modules`); }
 
-      const next = sinon.spy();
+      if (typeof func === 'function') {
 
-      await func(req, res, next);
+        const next = sinon.spy();
 
-      expect(execError).to.be.eq(undefined, 'The error that you are looking for has been throw and swalled some where.');
-
-      expect(next.callCount).to.eq(1);
-
-      let shouldHaveLoggedAThrow = depThrows;
-
-      if (mockData.response) {
-        if (mockData.response.status >= 400) {
-          shouldHaveLoggedAThrow = true;
+        try {
+          await func(req, res, next);
+        } catch (err) {
+          expect(execError.error).to.be.eq(undefined, 'The error that you are looking for has been throw and swalled some where.');
+          assert(false, 'The controller should have a try catch, that is handling everything.');
         }
-      } else {
-        assert(false, 'MockData.response is missing');
-      }
 
-      expect(loggerMock.error.callCount).to.eq(shouldHaveLoggedAThrow ? 1 : 0);
+        expect(execError.error).to.be.eq(undefined, 'The error that you are looking for has been throw and swalled some where.');
 
-      expect(res._getStatusCode()).to.equal(mockData.response.status);
+        expect(next.callCount).to.eq(1);
 
-      if (mockData.response.data) {
-        const data = res._getJSONData();
+        let shouldHaveLoggedAThrow = depThrows;
 
-        expect(data).to.deep.equal(mockData.response.data);
-      } else if (res.data) {
-        assert(data === undefined, 'Repsonse, shouldn\'t have returned any data.');
-      }
-
-      const headers = mockData.response.headers;
-
-      if (mockData.response.headers) {
-        const headerKeys = Object.keys(headers);
-
-        headerKeys.forEach((headerKey) => {
-          const mockDataValue = headers[headerKey];
-
-          let headerValue = res.getHeader(headerKey);
-
-          if (headerKey === 'location') {
-            headerValue = res._redirectUrl;
+        if (mockData.response) {
+          if (mockData.response.status >= 400) {
+            shouldHaveLoggedAThrow = true;
           }
+        } else {
+          assert(false, 'MockData.response is missing');
+        }
 
-          expect(mockDataValue).to.equal(headerValue, `Header:${headerKey}=${mockDataValue}!=${headerValue}`);
-        });
+        expect(loggerMock.error.callCount).to.eq(shouldHaveLoggedAThrow ? 1 : 0);
+
+        expect(res._getStatusCode()).to.equal(mockData.response.status);
+
+        if (mockData.response.data) {
+          const data = res._getJSONData();
+
+          expect(data).to.deep.equal(mockData.response.data);
+        } else if (res.data) {
+          assert(data === undefined, 'Repsonse, shouldn\'t have returned any data.');
+        }
+
+        const headers = mockData.response.headers;
+
+        if (mockData.response.headers) {
+          const headerKeys = Object.keys(headers);
+
+          headerKeys.forEach((headerKey) => {
+            const mockDataValue = headers[headerKey];
+
+            let headerValue = res.getHeader(headerKey);
+
+            if (headerKey === 'location') {
+              headerValue = res._redirectUrl;
+            }
+
+            expect(mockDataValue).to.equal(headerValue, `Header:${headerKey}=${mockDataValue}!=${headerValue}`);
+          });
+        }
+
+        await postTest();
+      } else {
+        // Loading of constants.
+        const result = await func;
+
+        expect(execError.error).to.eq(undefined, 'The error that you are looking for has been throw and swalled some where.');
+
+        if (mockData.result) {
+          expect(result).to.deep.eq(mockData.result);
+        }
       }
-
-      await postTest();
     }
   };
 }
