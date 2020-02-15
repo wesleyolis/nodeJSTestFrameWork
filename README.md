@@ -7,6 +7,27 @@ This framework initial looked at testing failure cases of micro services, the fo
 when any function is called incorrectly, throwing and error in a negative test will not ensure everything is still in working order, due the former statment. Therefore this framework has a global varible that is cleared, before each test case run and is explicitly checked after test case has been run for an error, before anything spesific to the test case is checked.
 So instead of throwing and error in a negative the global is set to the error, therefore preserving the original error.
 
+1.2 To elaborate futher on this matter and put it into perspective.
+The classification of your unit test cases or intergration test cases can be classified into 3 categories of errors.
+a. Positive cases Failures, given set of inputs and provide the enviroment is also fixed it results spesific output being returned.
+b. Negative cases, given set of inputs and provided the enviroment is fixed, it results in spesific set of return errors or throw errors depending our the language style choosen to follow.
+c. Then there is the test frame work configuration setup discrepancies, misconfiguration, errors, theres are things that are not supposed to have happened or were supped to have happened, however, due some mistake the stub may have had any matching parameters in which to throw or return a response.
+
+When dealing with how to fail your test with regards to framework configuration expected behaviour that has not been met or is wrong for any of the above reason, then the only way to communicate this test failure should be via a mechanisms that is not the same as in positive and negative cases. In otherwords don't use return value, return error, throw error to commnicate the issues out, because there many layers of your application were the return and throw will be remutated and can results in there being no change in the top level input to outputs(returns, throws), which means won't pick up bugs when there are refactors potentially.
+
+So the best approach is to use another mechanisms, in this case the simplist is to have a global variable for each test case, that is null(empty) at the stat of the test and at the end of the test, anything wrong with the framework, assigns its communication to this variable. Which then is the first variable of the test case to be check that is is null and nothing is wrong with the configurationa dn setup or function was called with in correct parameters.
+
+When doing this assignment something along the lines, that preserve the variables contents if it is not null, such that the first error will be seen and not the last.
+
+Example:
+
+```.js
+let unexpectedError = null;
+
+// assign results
+unexpectedError = !!unexpectedError || 'The current error you would like to assign';
+```
+
 2. When loading all configuration from files, it is also important that don't use throw and use the global error as required during the test run to communicate incorrect configuration. If you want fast fail up front then throw while setting up, if you would like to see an incremental failure for each incorrectly configured test case then use the global test runtime variable, which allow all tests to run, while seeing just the failed ones.
 
 3. Ideally the enviroment can change under neither the test as well, so needs to be configurable.
